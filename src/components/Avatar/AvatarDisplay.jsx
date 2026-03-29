@@ -230,6 +230,8 @@ const AvatarDisplay = ({ character, size = 'medium' }) => {
           <motion.path
             d={avatar.parts.leftLeg}
             fill={`url(#${avatar.gradientIds.legs})`}
+            stroke="#1a1a2e"
+            strokeWidth="1.5"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.25, ease: 'easeOut' }}
@@ -244,6 +246,8 @@ const AvatarDisplay = ({ character, size = 'medium' }) => {
           <motion.path
             d={avatar.parts.rightLeg}
             fill={`url(#${avatar.gradientIds.legs})`}
+            stroke="#1a1a2e"
+            strokeWidth="1.5"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.35, ease: 'easeOut' }}
@@ -258,6 +262,8 @@ const AvatarDisplay = ({ character, size = 'medium' }) => {
           <motion.path
             d={avatar.parts.back?.shape || avatar.parts.back}
             fill={`url(#${avatar.gradientIds.back})`}
+            stroke="#1a1a2e"
+            strokeWidth="1.5"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.1, ease: 'easeOut' }}
@@ -272,6 +278,8 @@ const AvatarDisplay = ({ character, size = 'medium' }) => {
           <motion.path
             d={avatar.parts.chest?.shape || avatar.parts.chest}
             fill={`url(#${avatar.gradientIds.chest})`}
+            stroke="#1a1a2e"
+            strokeWidth="1.5"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.12, ease: 'easeOut' }}
@@ -286,6 +294,8 @@ const AvatarDisplay = ({ character, size = 'medium' }) => {
           <motion.path
             d={avatar.parts.core?.shape || avatar.parts.core}
             fill={`url(#${avatar.gradientIds.core})`}
+            stroke="#1a1a2e"
+            strokeWidth="1.5"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
@@ -300,6 +310,8 @@ const AvatarDisplay = ({ character, size = 'medium' }) => {
           <motion.path
             d={avatar.parts.leftArm}
             fill={`url(#${avatar.gradientIds.arms})`}
+            stroke="#1a1a2e"
+            strokeWidth="1.5"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.45, ease: 'easeOut' }}
@@ -311,6 +323,8 @@ const AvatarDisplay = ({ character, size = 'medium' }) => {
           <motion.path
             d={avatar.parts.rightArm}
             fill={`url(#${avatar.gradientIds.arms})`}
+            stroke="#1a1a2e"
+            strokeWidth="1.5"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.55, ease: 'easeOut' }}
@@ -370,7 +384,7 @@ const AvatarDisplay = ({ character, size = 'medium' }) => {
           <motion.g initial={{ opacity: 0 }} animate={{ opacity: 0.7 }} transition={{ delay: 1.1 }}>
             <circle cx="140" cy="92" r="3" fill="#1a1a2e" />
             <circle cx="160" cy="92" r="3" fill="#1a1a2e" />
-            <path d="M 142 105 Q 150 112 158 105" fill="none" />
+            <path d="M 142 105 Q 150 112 158 105" fill="none" stroke="#1a1a2e" strokeWidth="2.5" strokeLinecap="round" />
           </motion.g>
 
           {/* Strongest body part highlight ring */}
