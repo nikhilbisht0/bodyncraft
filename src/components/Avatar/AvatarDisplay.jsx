@@ -58,7 +58,7 @@ const AvatarDisplay = ({ character, size = 'medium' }) => {
     },
     {
       key: 'upper',
-      label: 'Upper Body',
+      label: 'Chest',
       icon: '🏋️',
       stat: state.stats.strength,
       stage: avatar.bodyPartStages.upper,
