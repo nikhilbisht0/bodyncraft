@@ -384,7 +384,7 @@ const AvatarDisplay = ({ character, size = 'medium' }) => {
           <motion.g initial={{ opacity: 0 }} animate={{ opacity: 0.7 }} transition={{ delay: 1.1 }}>
             <circle cx="140" cy="92" r="3" fill="#1a1a2e" />
             <circle cx="160" cy="92" r="3" fill="#1a1a2e" />
-            <path d="M 142 105 Q 150 112 158 105" fill="none" stroke="#1a1a2e" strokeWidth="2.5" strokeLinecap="round" />
+            <path d="M 142 105 Q 150 112 158 105" fill="#1a1a2e" />
           </motion.g>
 
           {/* Strongest body part highlight ring */}
