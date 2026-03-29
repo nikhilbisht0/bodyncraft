@@ -122,14 +122,14 @@ const Dashboard = () => {
           />
 
           <motion.h1
-            className="text-6xl md:text-8xl lg:text-9xl font-black text-white mb-4 relative tracking-wider"
-            initial={{ letterSpacing: '0.1em' }}
+            className="text-4xl md:text-7xl lg:text-8xl font-black text-white mb-4 relative tracking-wide"
+            initial={{ letterSpacing: '0.05em' }}
             animate={{
-              letterSpacing: ['0.05em', '0.15em', '0.05em'],
+              letterSpacing: ['0.02em', '0.08em', '0.02em'],
               textShadow: [
-                '0 0 30px rgba(88, 204, 2, 0.4), 0 4px 30px rgba(88, 204, 2, 0.2)',
-                '0 0 60px rgba(88, 204, 2, 0.6), 0 8px 60px rgba(88, 204, 2, 0.4)',
-                '0 0 30px rgba(88, 204, 2, 0.4), 0 4px 30px rgba(88, 204, 2, 0.2)'
+                '0 0 20px rgba(88, 204, 2, 0.4), 0 3px 20px rgba(88, 204, 2, 0.2)',
+                '0 0 40px rgba(88, 204, 2, 0.6), 0 6px 40px rgba(88, 204, 2, 0.4)',
+                '0 0 20px rgba(88, 204, 2, 0.4), 0 3px 20px rgba(88, 204, 2, 0.2)'
               ]
             }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
