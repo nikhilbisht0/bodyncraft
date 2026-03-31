@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Swords, Map, GitBranch, Zap, Target, Award, Flame, TrendingUp, Sparkles } from 'lucide-react';
+import { Swords, Map, GitBranch, Zap, Target, Award, Flame, TrendingUp, Sparkles, LogOut } from 'lucide-react';
 import AvatarDisplay from '../Avatar/AvatarDisplay';
 import StatsPanel from './StatsPanel';
 import XPProgress from './XPProgress';
@@ -9,10 +9,16 @@ import WorkoutLog from './WorkoutLog';
 import CalorieTracker from './CalorieTracker';
 import { useCharacter } from '../../contexts/CharacterContext';
 import { useGame } from '../../contexts/GameContext';
+import { supabase } from '../../utils/supabaseClient';
 
 const Dashboard = () => {
   const { state } = useCharacter();
   const { startBattle, setCurrentMode } = useGame();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    // Page will refresh due to auth state change
+  };
 
   const quickActions = useMemo(() => [
     {
@@ -92,7 +98,20 @@ const Dashboard = () => {
       </div>
 
       <div className="max-w-6xl mx-auto relative z-10">
-        {/* Header */}
+        {/* Header with Logout */}
+        <div className="flex justify-between items-center mb-4">
+          <div></div> {/* Spacer */}
+          <motion.button
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg border border-white/20 transition-colors"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <LogOut size={18} />
+            <span className="hidden sm:inline">Logout</span>
+          </motion.button>
+        </div>
+
         <motion.div
           className="text-center mb-10 md:mb-16 relative"
           initial={{ opacity: 0, y: -30 }}

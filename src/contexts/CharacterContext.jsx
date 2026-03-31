@@ -1,9 +1,6 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import {
-  loadCharacter,
-  saveCharacter,
-  defaultCharacter,
-} from '../utils/localStorage';
+import React, { createContext, useContext, useReducer, useEffect, useState } from 'react';
+import { loadCharacter, saveCharacter } from '../utils/database';
+import { defaultCharacter } from '../utils/gameLogic';
 import {
   addXP,
   updateCharacterStats,
@@ -99,12 +96,22 @@ const characterReducer = (state, action) => {
 };
 
 export const CharacterProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(characterReducer, defaultCharacter);
+  const [state, dispatch] = useReducer(characterReducer, { ...defaultCharacter, initialized: false });
+  const [loading, setLoading] = useState(true);
 
   // Load character on mount
   useEffect(() => {
-    const savedCharacter = loadCharacter();
-    dispatch({ type: 'LOAD_CHARACTER', payload: savedCharacter });
+    const loadData = async () => {
+      const savedCharacter = await loadCharacter();
+      if (savedCharacter) {
+        dispatch({ type: 'LOAD_CHARACTER', payload: savedCharacter });
+      } else {
+        // No user data, initialize with defaults
+        dispatch({ type: 'LOAD_CHARACTER', payload: { ...defaultCharacter, initialized: true } });
+      }
+      setLoading(false);
+    };
+    loadData();
   }, []);
 
   // Save character whenever state changes
@@ -113,6 +120,15 @@ export const CharacterProvider = ({ children }) => {
       saveCharacter(state);
     }
   }, [state]);
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-green-900 to-green-950 text-white">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+        <p>Loading your adventure...</p>
+      </div>
+    </div>;
+  }
 
   return (
     <CharacterContext.Provider value={{ state, dispatch }}>
