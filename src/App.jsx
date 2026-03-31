@@ -24,7 +24,7 @@ const pageTransition = {
   damping: 30,
 };
 
-const AppContent = () => {
+const AppContent = ({ session }) => {
   const { currentMode } = useGame();
 
   const renderCurrentMode = () => {
@@ -36,7 +36,7 @@ const AppContent = () => {
       case GAME_MODES.SKILL_TREE:
         return <SkillTree />;
       default:
-        return <Dashboard />;
+        return <Dashboard session={session} />;
     }
   };
 
@@ -87,14 +87,10 @@ function App() {
     )
   }
 
-  if (!session) {
-    return <Login />
-  }
-
   return (
     <CharacterProvider>
       <GameProvider>
-        <AppContent />
+        <AppContent session={session} />
       </GameProvider>
     </CharacterProvider>
   );

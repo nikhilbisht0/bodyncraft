@@ -1,19 +1,21 @@
-import React, { useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { Swords, Map, GitBranch, Zap, Target, Award, Flame, TrendingUp, Sparkles, LogOut } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Swords, Map, GitBranch, Zap, Target, Award, Flame, TrendingUp, Sparkles, LogOut, LogIn } from 'lucide-react';
 import AvatarDisplay from '../Avatar/AvatarDisplay';
 import StatsPanel from './StatsPanel';
 import XPProgress from './XPProgress';
 import StreakCounter from './StreakCounter';
 import WorkoutLog from './WorkoutLog';
 import CalorieTracker from './CalorieTracker';
+import Login from '../Auth/Login';
 import { useCharacter } from '../../contexts/CharacterContext';
 import { useGame } from '../../contexts/GameContext';
 import { supabase } from '../../utils/supabaseClient';
 
-const Dashboard = () => {
+const Dashboard = ({ session }) => {
   const { state } = useCharacter();
   const { startBattle, setCurrentMode } = useGame();
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -98,19 +100,64 @@ const Dashboard = () => {
       </div>
 
       <div className="max-w-6xl mx-auto relative z-10">
-        {/* Header with Logout */}
+        {/* Header with Login/Logout */}
         <div className="flex justify-between items-center mb-4">
           <div></div> {/* Spacer */}
-          <motion.button
-            onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg border border-white/20 transition-colors"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <LogOut size={18} />
-            <span className="hidden sm:inline">Logout</span>
-          </motion.button>
+          {session ? (
+            <motion.button
+              onClick={handleLogout}
+              className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg border border-white/20 transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <LogOut size={18} />
+              <span className="hidden sm:inline">Logout</span>
+            </motion.button>
+          ) : (
+            <motion.button
+              onClick={() => setShowLoginModal(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-[#58cc02] hover:bg-[#46a302] text-white rounded-lg border border-[#46a302] transition-colors shadow-lg shadow-[#58cc02]/30"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <LogIn size={18} />
+              <span className="hidden sm:inline">Login</span>
+            </motion.button>
+          )}
         </div>
+
+        {/* Login Modal (shown when not logged in) */}
+        <AnimatePresence>
+          {!session && showLoginModal && (
+            <motion.div
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowLoginModal(false)}
+            >
+              <motion.div
+                onClick={(e) => e.stopPropagation()}
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+                className="w-full max-w-md relative"
+              >
+                <button
+                  onClick={() => setShowLoginModal(false)}
+                  className="absolute -top-10 right-0 text-gray-400 hover:text-white transition-colors text-sm flex items-center gap-1"
+                >
+                  <span>Close</span>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+                <Login onSuccess={() => setShowLoginModal(false)} />
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <motion.div
           className="text-center mb-10 md:mb-16 relative"
