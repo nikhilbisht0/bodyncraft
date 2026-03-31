@@ -1,0 +1,144 @@
+{
+  "name": "Bodyncraft - Workout Completed Notification",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "bodyncraft/workout-complete",
+        "options": {}
+      },
+      "id": "webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ],
+      "webhookId": "bodyncraft-workout-complete"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get user email from Supabase\nconst { data: userData } = $getFirstItem('userData');\nconst webhookData = $getFirstItem('webhookData');\n\nconst userEmail = userData?.email || 'user@example.com';\nconst exerciseName = webhookData?.exercise_name || 'workout';\nconst xpEarned = webhookData?.xp_earned || 0;\nconst date = new Date(webhookData?.date).toLocaleDateString('en-US', {\n  weekday: 'long',\n  year: 'numeric',\n  month: 'long',\n  day: 'numeric'\n});\n\nreturn {\n  email: userEmail,\n  subject: `💪 Bodyncraft: You completed ${exerciseName}!`,\n  body: `\n    <h2>Great workout!</h2>\n    <p>You completed <strong>${exerciseName}</strong> on ${date}.</p>\n    <p>XP Earned: <strong>${xpEarned}</strong></p>\n    <hr>\n    <p><a href=\"https://bodyncraft.vercel.app\">Open Bodyncraft</a></p>\n  `\n};"
+      },
+      "name": "Prepare Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "topic": "bodyncraft_workout",
+        "subject": "={{ $json.subject }}",
+        "text": "={{ $json.body }}",
+        "html": "={{ $json.body }}",
+        "options": {}
+      },
+      "name": "Send Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        650,
+        300
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_SMTP_CRED_ID",
+          "name": "Configure in n8n"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "headerAuth": {
+          "name": "Authorization",
+          "value": "Bearer YOUR_SUPABASE_SERVICE_ROLE_KEY"
+        },
+        "method": "GET",
+        "url": "https://nnwqzfbfreugrmtqqynw.supabase.co/rest/v1/users?select=email,id&eq=user_id,={{ $json.user_id }}",
+        "options": {}
+      },
+      "name": "Get User Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        250,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "headerAuth",
+        "headerAuth": {
+          "name": "apikey",
+          "value": "YOUR_SUPABASE_ANON_KEY"
+        },
+        "method": "GET",
+        "url": "https://nnwqzfbfreugrmtqqynw.supabase.co/rest/v1/users?select=email&id=eq.USER_ID_PLACEHOLDER",
+        "options": {}
+      },
+      "name": "Get User from Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        250,
+        450
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get User from Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get User from Supabase": {
+      "main": [
+        [
+          {
+            "node": "Prepare Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Email": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2025-03-31T12:00:00.000Z",
+      "updatedAt": "2025-03-31T12:00:00.000Z",
+      "id": "bodyncraft",
+      "name": "Bodyncraft"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2025-03-31T12:00:00.000Z",
+  "versionId": "1"
+}
