@@ -260,6 +260,13 @@ const defaultCharacter = {
     core: [],
   },
   totalWorkouts: 0,
+  profile: {
+    weight: 70,
+    height: 170,
+    age: 25,
+    gender: 'male',
+    activityLevel: 1.2,
+  },
   createdAt: new Date().toISOString(),
 };
 

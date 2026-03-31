@@ -26,10 +26,24 @@ const CalorieTracker = () => {
   const calories = state.calories || 0;
   const [showProfileForm, setShowProfileForm] = useState(false);
   const [showCalculator, setShowCalculator] = useState(false);
-  const [editProfile, setEditProfile] = useState({ ...profile });
+  const [editProfile, setEditProfile] = useState({
+    weight: 70,
+    height: 170,
+    age: 25,
+    gender: 'male',
+    activityLevel: 1.2
+  });
+
+  // Update editProfile when profile loads
+  useEffect(() => {
+    if (profile) {
+      setEditProfile({ ...profile });
+    }
+  }, [profile]);
 
   // Calculate daily goal based on BMR and activity
   const dailyGoal = useMemo(() => {
+    if (!profile) return 2000; // fallback
     const bmr = calculateBMR(profile.weight, profile.height, profile.age, profile.gender);
     const multiplier = activityMultipliers[profile.activityLevel]?.multiplier || 1.2;
     return Math.round(bmr * multiplier);
@@ -37,11 +51,13 @@ const CalorieTracker = () => {
 
   // Calculate BMR for display
   const bmr = useMemo(() => {
+    if (!profile) return 0;
     return Math.round(calculateBMR(profile.weight, profile.height, profile.age, profile.gender));
   }, [profile]);
 
   // Calculate detailed breakdown
   const calcDetails = useMemo(() => {
+    if (!profile) return { bmr: 0, multiplier: 1.2, tdee: 2000, deficit500: 1500, surplus500: 2500, activityLabel: 'Sedentary' };
     const multiplier = activityMultipliers[profile.activityLevel]?.multiplier || 1.2;
     const tdee = Math.round(bmr * multiplier);
     // Weight loss/gain targets (optional)
