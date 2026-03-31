@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Dumbbell, CheckCircle, Trophy, Clock } from 'lucide-react';
-import { loadWorkoutHistory } from '../../utils/localStorage';
+import { loadWorkoutHistory } from '../../utils/database';
 
 const WorkoutLog = () => {
   const [workouts, setWorkouts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const history = loadWorkoutHistory();
-    // Show last 5 workouts
-    setWorkouts(history.slice(-5).reverse());
+    const loadHistory = async () => {
+      const history = await loadWorkoutHistory();
+      // Show last 5 workouts
+      setWorkouts(history.slice(-5).reverse());
+      setLoading(false);
+    };
+    loadHistory();
   }, []);
 
   const getIconForBodyPart = (bodyPart) => {
@@ -29,6 +34,21 @@ const WorkoutLog = () => {
       default: return 'from-purple-500/20 to-purple-600/10 border-purple-500/30 text-purple-400';
     }
   };
+
+  if (loading) {
+    return (
+      <motion.div
+        className="relative glass-card glass-card-hover p-6 overflow-hidden"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+      >
+        <div className="flex items-center justify-center py-12 text-gray-400">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+        </div>
+      </motion.div>
+    );
+  }
 
   if (workouts.length === 0) {
     return (
