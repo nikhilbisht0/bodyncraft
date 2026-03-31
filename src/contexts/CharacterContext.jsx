@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect, useState } from 'react';
-import { loadCharacter, saveCharacter } from '../utils/database';
+import { loadCharacter, saveCharacter, saveWorkout } from '../utils/database';
 import { defaultCharacter } from '../utils/gameLogic';
 import {
   addXP,
@@ -43,27 +43,13 @@ const characterReducer = (state, action) => {
       };
 
     case 'COMPLETE_WORKOUT':
-      // Apply stat increases from workout
-      let updatedState = { ...state };
-      const statMap = { arms: 'strength', legs: 'endurance', core: 'core' };
-      const statKey = statMap[action.payload.exercise.bodyPart];
-      if (statKey) {
-        const increase = action.payload.exercise.damageMultiplier * 2 * action.payload.reps;
-        updatedState.stats[statKey] += increase;
-        updatedState.stats.overall = Math.floor(
-          (updatedState.stats.strength + updatedState.stats.endurance + updatedState.stats.core) / 3
-        );
-        updatedState.totalWorkouts += 1;
+      // Use the character returned from completeBattle (already has all updates applied)
+      let updatedState = { ...action.payload.character };
+
+      // Save workout to history table and trigger n8n webhook
+      if (action.payload.workoutEntry) {
+        saveWorkout(action.payload.workoutEntry);
       }
-
-      // Add XP
-      updatedState = addXP(updatedState, action.payload.xp);
-
-      // Update streak
-      updatedState.streak = action.payload.newStreak;
-
-      // Check for zone unlocks
-      updatedState = checkZoneUnlocks(updatedState);
 
       // Save immediately
       saveCharacter(updatedState);

@@ -226,6 +226,7 @@ export const completeBattle = (character, enemy, exerciseUsed, reps) => {
   return {
     character: finalChar,
     xpEarned: workoutEntry.xpEarned,
+    workoutEntry, // Include full workout entry
   };
 };
 

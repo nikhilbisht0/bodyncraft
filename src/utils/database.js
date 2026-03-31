@@ -121,6 +121,7 @@ export const loadWorkoutHistory = async () => {
     xpEarned: w.calories_xp,
     durationMinutes: w.duration_minutes,
     perfectForm: false, // Not stored yet
+    reps: w.duration_minutes || 10, // Use duration as proxy for reps
   }))
 }
 
@@ -128,6 +129,12 @@ export const loadWorkoutHistory = async () => {
 export const saveWorkout = async (workoutEntry) => {
   const userId = await getUserId()
   if (!userId) return
+
+  // Convert date to YYYY-MM-DD format for database
+  const workoutDate = workoutEntry.date instanceof Date
+    ? workoutEntry.date
+    : new Date(workoutEntry.date)
+  const dateString = workoutDate.toISOString().split('T')[0]
 
   const { error } = await supabase
     .from('workouts')
@@ -137,11 +144,32 @@ export const saveWorkout = async (workoutEntry) => {
       exercise_name: workoutEntry.exerciseName,
       duration_minutes: workoutEntry.durationMinutes || 20,
       calories_xp: workoutEntry.xpEarned,
-      date: workoutEntry.date.toISOString().split('T')[0],
+      date: dateString,
     })
 
   if (error) {
     console.error('Failed to save workout:', error)
+    return
+  }
+
+  // Send webhook to n8n (for automations) - optional
+  const n8nWebhookUrl = import.meta.env.VITE_N8N_WEBHOOK_URL
+  if (n8nWebhookUrl) {
+    try {
+      await fetch(n8nWebhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: userId,
+          exercise_name: workoutEntry.exerciseName,
+          xp_earned: workoutEntry.xpEarned,
+          date: workoutDate.toISOString(),
+          body_part: workoutEntry.bodyPart,
+        }),
+      })
+    } catch (e) {
+      // Silent fail - n8n is optional
+    }
   }
 }
 
