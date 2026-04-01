@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { motion } from 'framer-motion'
 import { supabase } from '../../utils/supabaseClient'
 
 export default function Login({ onSuccess }) {
