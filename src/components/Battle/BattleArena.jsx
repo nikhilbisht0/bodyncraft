@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Sword, Target, Zap, Award, RotateCcw } from 'lucide-react';
 import { useGame } from '../../contexts/GameContext';
 import { useCharacter } from '../../contexts/CharacterContext';
-import { getRandomEnemy, getEnemiesByBodyPart } from '../../data/enemies';
+import { getRandomEnemy } from '../../data/enemies';
 import { getExercisesByBodyPart } from '../../data/exercises';
 import { logWorkout, completeBattle } from '../../utils/gameLogic';
 import Button from '../Common/Button';
