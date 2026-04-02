@@ -1,158 +1,78 @@
-// Enemies organized by body part and zone
-export const enemies = {
-  // ARM ENEMIES
-  arms: [
-    {
-      id: 'stone-golem',
-      name: 'Stone Golem',
-      health: 50,
-      maxHealth: 50,
-      damage: 5,
-      bodyPart: 'arms',
-      zone: 'forest',
-      isBoss: false,
+// Simplified enemy system - one enemy type per body part
+// Enemy stats scale with character level
+
+export const ENEMY_TYPES = {
+  arms: {
+    base: {
+      id: 'golem-arms',
+      name: 'Golem',
       emoji: '🪨',
-      description: 'A towering rock creature',
-      xpReward: 25
+      description: 'A powerful rock creature',
+      baseHealth: 30,
+      baseDamage: 3,
+      baseXP: 15
     },
-    {
-      id: 'iron-fist',
-      name: 'Iron Fist Master',
-      health: 80,
-      maxHealth: 80,
-      damage: 10,
-      bodyPart: 'arms',
-      zone: 'mountains',
-      isBoss: false,
-      emoji: '👊',
-      description: 'Martial arts expert with crushing fists',
-      xpReward: 50
-    },
-    {
-      id: 'dragon-claw',
-      name: 'Dragon Claw',
-      health: 150,
-      maxHealth: 150,
-      damage: 20,
-      bodyPart: 'arms',
-      zone: 'volcano',
-      isBoss: false,
-      emoji: '🐉',
-      description: 'Ancient dragon with razor-sharp claws',
-      xpReward: 100
-    },
-  ],
-
-  // LEG ENEMIES
-  legs: [
-    {
-      id: 'runner-beast',
-      name: 'Runner Beast',
-      health: 60,
-      maxHealth: 60,
-      damage: 8,
-      bodyPart: 'legs',
-      zone: 'forest',
-      isBoss: false,
+    scaling: {
+      healthPerLevel: 10,
+      damagePerLevel: 2,
+      xpPerLevel: 5
+    }
+  },
+  legs: {
+    base: {
+      id: 'beast-legs',
+      name: 'Beast',
       emoji: '🐺',
-      description: 'Swift predator with powerful legs',
-      xpReward: 30
+      description: 'A swift predator',
+      baseHealth: 40,
+      baseDamage: 4,
+      baseXP: 20
     },
-    {
-      id: 'centaur-warrior',
-      name: 'Centaur Warrior',
-      health: 100,
-      maxHealth: 100,
-      damage: 15,
-      bodyPart: 'legs',
-      zone: 'mountains',
-      isBoss: false,
-      emoji: '🐴',
-      description: 'Half-human, half-horse with devastating kicks',
-      xpReward: 60
-    },
-    {
-      id: 'spider-queen',
-      name: 'Spider Queen',
-      health: 200,
-      maxHealth: 200,
-      damage: 25,
-      bodyPart: 'legs',
-      zone: 'volcano',
-      isBoss: false,
-      emoji: '🕷️',
-      description: 'Eight legs of deadly precision',
-      xpReward: 120
-    },
-  ],
-
-  // CORE ENEMIES
-  core: [
-    {
-      id: 'slime-king',
-      name: 'Slime King',
-      health: 70,
-      maxHealth: 70,
-      damage: 12,
-      bodyPart: 'core',
-      zone: 'forest',
-      isBoss: false,
-      emoji: '🟢',
-      description: 'Bouncy gelatinous monarch',
-      xpReward: 35
-    },
-    {
-      id: 'stone-golem-core',
-      name: 'Granite Guardian',
-      health: 120,
-      maxHealth: 120,
-      damage: 18,
-      bodyPart: 'core',
-      zone: 'mountains',
-      isBoss: false,
+    scaling: {
+      healthPerLevel: 12,
+      damagePerLevel: 2.5,
+      xpPerLevel: 6
+    }
+  },
+  core: {
+    base: {
+      id: 'titan-core',
+      name: 'Titan',
       emoji: '🗿',
-      description: 'Living statue with impenetrable core',
-      xpReward: 70
+      description: 'A formidable Guardian',
+      baseHealth: 50,
+      baseDamage: 5,
+      baseXP: 25
     },
-    {
-      id: 'lava-golem',
-      name: 'Lava Golem',
-      health: 250,
-      maxHealth: 250,
-      damage: 30,
-      bodyPart: 'core',
-      zone: 'volcano',
-      isBoss: false,
-      emoji: '🌋',
-      description: 'Molten core burns with eternal fire',
-      xpReward: 150
-    },
-  ],
+    scaling: {
+      healthPerLevel: 15,
+      damagePerLevel: 3,
+      xpPerLevel: 7
+    }
+  }
 };
 
-// Weekly bosses (harder, special enemies)
+// Weekly bosses (still exist - special encounters)
 export const weeklyBosses = [
   {
-    id: 'titan',
+    id: 'titan-boss',
     name: 'Iron Titan',
     health: 500,
     maxHealth: 500,
     damage: 40,
     bodyPart: 'arms',
-    zone: 'all',
     isBoss: true,
     emoji: '🤖',
     description: 'Ancient war machine',
     xpReward: 300
   },
   {
-    id: 'hydra',
+    id: 'hydra-boss',
     name: 'Forest Hydra',
     health: 600,
     maxHealth: 600,
     damage: 35,
     bodyPart: 'legs',
-    zone: 'all',
     isBoss: true,
     emoji: '🐲',
     description: 'Multi-headed serpent beast',
@@ -165,7 +85,6 @@ export const weeklyBosses = [
     maxHealth: 700,
     damage: 45,
     bodyPart: 'core',
-    zone: 'all',
     isBoss: true,
     emoji: '👹',
     description: 'Born from the depths of darkness',
@@ -173,23 +92,38 @@ export const weeklyBosses = [
   },
 ];
 
-// Get enemy by body part and zone
-export const getEnemiesByBodyPart = (bodyPart, zone = null) => {
-  let filtered = enemies[bodyPart] || [];
-  if (zone) {
-    filtered = filtered.filter(e => e.zone === zone);
-  }
-  return filtered;
+// Generate a scaled enemy for the given body part and character level
+export const generateEnemy = (bodyPart, level = 1) => {
+  const type = ENEMY_TYPES[bodyPart];
+  if (!type) return null;
+
+  const { base, scaling } = type;
+
+  // Calculate scaled stats
+  const health = Math.floor(base.baseHealth + (level - 1) * scaling.healthPerLevel);
+  const damage = Math.floor(base.baseDamage + (level - 1) * scaling.damagePerLevel);
+  const xpReward = Math.floor(base.baseXP + (level - 1) * scaling.xpPerLevel);
+
+  return {
+    id: `${base.id}-lvl${level}`,
+    name: `${base.name} Lvl. ${level}`,
+    health: health,
+    maxHealth: health,
+    damage: damage,
+    bodyPart: bodyPart,
+    isBoss: false,
+    emoji: base.emoji,
+    description: base.description,
+    xpReward: xpReward
+  };
 };
 
-// Get random enemy for body part
-export const getRandomEnemy = (bodyPart, zone = null) => {
-  const pool = getEnemiesByBodyPart(bodyPart, zone);
-  if (pool.length === 0) return null;
-  return pool[Math.floor(Math.random() * pool.length)];
+// Get random enemy for body part (scaled to character's level)
+export const getRandomEnemy = (bodyPart, level = 1) => {
+  return generateEnemy(bodyPart, level);
 };
 
-// Get weekly boss
+// Get weekly boss (unchanged)
 export const getWeeklyBoss = (bodyPart) => {
   const bosses = weeklyBosses.filter(b => b.bodyPart === bodyPart);
   return bosses[Math.floor(Math.random() * bosses.length)];

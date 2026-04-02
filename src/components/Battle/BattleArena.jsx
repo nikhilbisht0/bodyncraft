@@ -31,7 +31,9 @@ const BattleArena = () => {
     battleLog,
     addBattleLog,
     showVictory,
+    setShowVictory,
     showDefeat,
+    setShowDefeat,
     endBattle,
     startBattle,
     returnToDashboard,
@@ -52,13 +54,14 @@ const BattleArena = () => {
   // Initialize enemy when body part is selected
   useEffect(() => {
     if (selectedBodyPart) {
-      const enemy = getRandomEnemy(selectedBodyPart, character.unlockedZones[0]);
+      // Enemies now scale with character level
+      const enemy = getRandomEnemy(selectedBodyPart, character.level);
       if (enemy) {
         setCurrentEnemy(enemy);
         setEnemyHealth(enemy.health);
       }
     }
-  }, [selectedBodyPart, setCurrentEnemy, character.unlockedZones]);
+  }, [selectedBodyPart, setCurrentEnemy, character.level]);
 
   // Enemy damage to player
   useEffect(() => {
@@ -109,11 +112,15 @@ const BattleArena = () => {
 
   const resetBattle = () => {
     if (selectedBodyPart) {
-      const enemy = getRandomEnemy(selectedBodyPart, character.unlockedZones[0]);
-      setCurrentEnemy(enemy);
-      setEnemyHealth(enemy.health);
-      setSelectedExercise(null);
+      // Generate new enemy scaled to current level
+      const enemy = getRandomEnemy(selectedBodyPart, character.level);
+      if (enemy) {
+        setCurrentEnemy(enemy);
+        setEnemyHealth(enemy.health);
+      }
     }
+    setSelectedExercise(null);
+    setShowVictory(false); // Close the victory modal
   };
 
   if (!selectedBodyPart) {

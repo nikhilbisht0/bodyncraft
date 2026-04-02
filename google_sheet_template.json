@@ -1,0 +1,33 @@
+{
+  "title": "Bodyncraft Workout Log",
+  "mimeType": "application/vnd.google-apps.spreadsheet",
+  "sheets": [
+    {
+      "properties": {
+        "title": "Workouts"
+      },
+      "gridProperties": {
+        "rowCount": 1000,
+        "columnCount": 6
+      },
+      "data": [
+        {
+          "startRow": 1,
+          "startColumn": 1,
+          "rowData": [
+            {
+              "values": [
+                { "userEnteredValue": { "stringValue": "Date" } },
+                { "userEnteredValue": { "stringValue": "User Email" } },
+                { "userEnteredValue": { "stringValue": "Exercise" } },
+                { "userEnteredValue": { "stringValue": "XP Earned" } },
+                { "userEnteredValue": { "stringValue": "Body Part" } },
+                { "userEnteredValue": { "stringValue": "User ID" } }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

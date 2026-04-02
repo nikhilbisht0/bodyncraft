@@ -1,5 +1,5 @@
 {
-  "name": "Bodyncraft - Workout Completed Notification",
+  "name": "Bodyncraft - Workout Completed Notification (FIXED)",
   "nodes": [
     {
       "parameters": {
@@ -21,7 +21,7 @@
         "authentication": "headerAuth",
         "headerAuth": {
           "name": "Authorization",
-          "value": "Bearer YOUR_SUPABASE_SERVICE_ROLE_KEY"
+          "value": "Bearer {{ $vars.SUPABASE_SERVICE_ROLE_KEY }}"
         },
         "method": "GET",
         "url": "https://nnwqzfbfreugrmtqqynw.supabase.co/rest/v1/users?select=email,id&eq=user_id,={{ $json.user_id }}",
@@ -37,7 +37,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Get data from both webhook and user lookup\nconst webhookData = $getFirstItem('webhookData');\nconst userData = $getFirstItem('userData');\n\nconst userEmail = userData?.email || 'user@example.com';\nconst exerciseName = webhookData?.exercise_name || 'workout';\nconst xpEarned = webhookData?.xp_earned || 0;\nconst bodyPart = webhookData?.body_part || 'unknown';\nconst date = new Date(webhookData?.date).toLocaleDateString('en-US', {\n  weekday: 'long',\n  year: 'numeric',\n  month: 'long',\n  day: 'numeric'\n});\n\nreturn {\n  email: userEmail,\n  subject: `💪 Bodyncraft: You completed ${exerciseName}!`,\n  body: `\n    <h2>Great workout!</h2>\n    <p>You completed <strong>${exerciseName}</strong> on ${date}.</p>\n    <p>XP Earned: <strong>${xpEarned}</strong></p>\n    <hr>\n    <p><a href=\"https://bodyncraft.vercel.app\">Open Bodyncraft</a></p>\n  `,\n  body_part: bodyPart,\n  user_id: webhookData?.user_id\n};"
+        "jsCode": "// Get data from both webhook and user lookup\nconst webhookData = $input.first()?.json || {};\nconst userData = $input.last()?.json || {};\n\nconst userEmail = userData?.email || 'user@example.com';\nconst exerciseName = webhookData?.exercise_name || 'workout';\nconst xpEarned = webhookData?.xp_earned || 0;\nconst bodyPart = webhookData?.body_part || 'unknown';\nconst date = new Date(webhookData?.date || Date.now()).toLocaleDateString('en-US', {\n  weekday: 'long',\n  year: 'numeric',\n  month: 'long',\n  day: 'numeric'\n});\n\nconsole.log('Processing workout:', { userEmail, exerciseName, xpEarned, bodyPart, date });\n\nreturn [{\n  json: {\n    email: userEmail,\n    subject: `💪 Bodyncraft: You completed ${exerciseName}!`,\n    body: `\n      <h2>Great workout!</h2>\n      <p>You completed <strong>${exerciseName}</strong> on ${date}.</p>\n      <p>XP Earned: <strong>${xpEarned}</strong></p>\n      <hr>\n      <p><a href=\"https://bodyncraft.vercel.app\">Open Bodyncraft</a></p>\n    `,\n    body_part: bodyPart,\n    user_id: webhookData?.user_id\n  }\n}];"
       },
       "name": "Prepare Email",
       "type": "n8n-nodes-base.code",
@@ -142,7 +142,9 @@
             "node": "Send Email",
             "type": "main",
             "index": 0
-          },
+          }
+        ],
+        [
           {
             "node": "Append to Google Sheets",
             "type": "main",
@@ -167,5 +169,5 @@
   ],
   "triggerCount": 0,
   "updatedAt": "2025-03-31T12:00:00.000Z",
-  "versionId": "1"
+  "versionId": "2"
 }
